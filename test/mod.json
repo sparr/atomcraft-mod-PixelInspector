@@ -1,0 +1,19 @@
+{
+  "id": "PixelInspector.Test",
+  "name": "Pixel Inspector Tests",
+  "description": "Tests for the PixelInspector mod. Install only when running the test harness.",
+  "author": "sparr",
+  "version": "0.1.0",
+  "modules": [
+    {
+      "moduleId": "PixelInspector.Test/Main",
+      "dll": "PixelInspector.Test.dll",
+      "initClass": "PixelInspector.Test.ModEntry",
+      "dependencies": [
+        "PixelInspector/Main",
+        "PixelArt/Main",
+        "TestHarness/Main"
+      ]
+    }
+  ]
+}
