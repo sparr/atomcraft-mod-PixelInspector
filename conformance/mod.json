@@ -1,0 +1,15 @@
+{
+  "id": "PixelInspectorConformance",
+  "name": "Pixel Inspector Conformance",
+  "description": "Properties of the game that any mod reading a pixel's programmed state depends on. Names no mod; install it beside one, beside a rival, or beside none.",
+  "author": "sparr",
+  "version": "0.1.0",
+  "modules": [
+    {
+      "moduleId": "PixelInspectorConformance/Main",
+      "dll": "PixelInspectorConformance.dll",
+      "initClass": "PixelInspectorConformance.ModEntry",
+      "dependencies": ["TestHarness/Main"]
+    }
+  ]
+}
