@@ -1,0 +1,23 @@
+# Where this project finds the Pixel Art drawing library.
+#
+#   cp pixelart.conf.example pixelart.conf   and edit.
+#
+# pixelart.conf is gitignored. The environment wins over it, so a one-off run can set the value
+# inline instead.
+#
+# Same rule as harness.conf, for the same reason: point this at a PINNED RELEASE, never at the
+# sibling checkout in ../PixelArt. This project does not build Pixel Art and does not read its
+# sources. A checkout someone is working in can be mid-edit and uncompilable, and when that
+# happened with the TestHarness it took a consuming project's tests down for reasons that had
+# nothing to do with that project.
+#
+# The zip supplies both the assembly this mod compiles against and the mod the game loads, so
+# those are the same bytes by construction.
+
+# TODO: point this at a release once Pixel Art cuts one. Until then it names a snapshot taken by
+# hand out of the sibling checkout's release build -- a pin in the sense that it does not move
+# when that checkout does, but not yet a version anybody else could reproduce.
+#
+#   sha256 77ad791782849bb3397205204d764b052332db3cfab00090df12fb7c94552fd9
+#
+PIXELART_ZIP="$HOME/.cache/atomcraft-pixelart-0.4.0/PixelArt.zip"
