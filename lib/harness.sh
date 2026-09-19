@@ -5,8 +5,10 @@
 #   MOD_ID                 the mod id, also the suffix of the default test root
 #   TEST_ROOT              exported; a root private to this project
 #   ATOMCRAFT_HARNESS      the tooling: run-tests.sh, bootstrap.sh, lib/
-#   ATOMCRAFT_HARNESS_ZIP  the pinned TestHarness.zip
-#   PIXELART_ZIP           the pinned PixelArt.zip: the drawing library this mod draws through
+#   ATOMCRAFT_HARNESS_ZIP  the pinned TestHarness.zip, verified against
+#                          ATOMCRAFT_HARNESS_ZIP_SHA256 when one is recorded
+#   PIXELART_ZIP           the pinned PixelArt.zip: the drawing library this mod draws through,
+#                          verified against PIXELART_ZIP_SHA256 when one is recorded
 #
 # Two things, and neither of them is a development checkout. This project does not build the
 # harness and does not read its sources: a tree someone is working in can be mid-edit and
@@ -30,12 +32,16 @@ export TEST_ROOT="${TEST_ROOT:-$HOME/.cache/atomcraft-test-$(printf '%s' "$MOD_I
 
 # Pixel Art, pinned the same way and for the same reasons. See pixelart.conf.example.
 _env_pixelart="${PIXELART_ZIP:-}"
+_env_pixelart_sha="${PIXELART_ZIP_SHA256:-}"
 [ -f ./pixelart.conf ] && . ./pixelart.conf
 [ -n "$_env_pixelart" ] && PIXELART_ZIP="$_env_pixelart"
+[ -n "$_env_pixelart_sha" ] && PIXELART_ZIP_SHA256="$_env_pixelart_sha"
 PIXELART_ZIP="${PIXELART_ZIP:-}"
+PIXELART_ZIP_SHA256="${PIXELART_ZIP_SHA256:-}"
 
 _env_harness="${ATOMCRAFT_HARNESS:-}"
 _env_zip="${ATOMCRAFT_HARNESS_ZIP:-}"
+_env_zip_sha="${ATOMCRAFT_HARNESS_ZIP_SHA256:-}"
 for _candidate in ./harness.conf "${XDG_CONFIG_HOME:-$HOME/.config}/atomcraft-test/config"; do
     [ -f "$_candidate" ] || continue
     # shellcheck disable=SC1090
@@ -44,8 +50,38 @@ for _candidate in ./harness.conf "${XDG_CONFIG_HOME:-$HOME/.config}/atomcraft-te
 done
 [ -n "$_env_harness" ] && ATOMCRAFT_HARNESS="$_env_harness"
 [ -n "$_env_zip" ] && ATOMCRAFT_HARNESS_ZIP="$_env_zip"
+[ -n "$_env_zip_sha" ] && ATOMCRAFT_HARNESS_ZIP_SHA256="$_env_zip_sha"
 HARNESS="${ATOMCRAFT_HARNESS:-}"
 HARNESS_ZIP="${ATOMCRAFT_HARNESS_ZIP:-}"
+ATOMCRAFT_HARNESS_ZIP_SHA256="${ATOMCRAFT_HARNESS_ZIP_SHA256:-}"
+
+# Verify a pinned zip against the checksum recorded beside its path, when one is recorded. The
+# release's SHA256SUMS is the authority; this is where that value gets checked rather than merely
+# read. Mirrors the pinned-loader gate in the harness's own bootstrap.sh, and exists because a
+# checksum in a comment goes stale exactly as silently as a path does: three projects in this
+# family carried a sha256 comment above their PixelArt pin, and not one of the three described
+# the file it sat above.
+#
+# Fatal on mismatch: the wrong build of a library is how a MissingMethodException from somewhere
+# unrelated happens, and a sum that is checked and then shrugged at is not a check. Skipped when
+# no sum is recorded, so a checkout that has not pinned one still runs.
+verify_pinned_zip() {
+    local label="$1" path="$2" want="${3:-}" got
+    [ -n "$want" ] || return 0
+    got="$(sha256sum "$path" | cut -d' ' -f1)"
+    [ "$got" = "$want" ] && return 0
+    cat >&2 <<EOF
+error: $label does not match its pinned checksum.
+
+    file     $path
+    expected $want
+    actual   $got
+
+Either that file is not the release it claims to be, or the pin is stale. SHA256SUMS on the
+release page is the authority; do not edit the pin to match a file you have not checked.
+EOF
+    exit 1
+}
 
 require_harness() {
     if [ -z "$HARNESS" ] || [ -z "$HARNESS_ZIP" ]; then
@@ -71,6 +107,7 @@ EOF
         }
     done
     [ -f "$HARNESS_ZIP" ] || { echo "error: no file at ATOMCRAFT_HARNESS_ZIP=$HARNESS_ZIP" >&2; exit 1; }
+    verify_pinned_zip ATOMCRAFT_HARNESS_ZIP "$HARNESS_ZIP" "${ATOMCRAFT_HARNESS_ZIP_SHA256:-}"
 }
 
 require_pixelart() {
@@ -87,6 +124,8 @@ a mid-edit checkout cannot fail this project's tests.
 EOF
         exit 1
     fi
+
+    verify_pinned_zip PIXELART_ZIP "$PIXELART_ZIP" "${PIXELART_ZIP_SHA256:-}"
 }
 
 # The assembly this mod compiles against, taken out of the same zip the game will load -- so

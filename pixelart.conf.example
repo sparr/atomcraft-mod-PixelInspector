@@ -13,11 +13,17 @@
 #
 # The zip supplies both the assembly this mod compiles against and the mod the game loads, so
 # those are the same bytes by construction.
-
-# TODO: point this at a release once Pixel Art cuts one. Until then it names a snapshot taken by
-# hand out of the sibling checkout's release build -- a pin in the sense that it does not move
-# when that checkout does, but not yet a version anybody else could reproduce.
 #
-#   sha256 77ad791782849bb3397205204d764b052332db3cfab00090df12fb7c94552fd9
+# Keep it in step with the PixelArtVersion pin in src/ModEntry.cs. Pixel Art's 0.x API changes
+# between minor versions, and the loader's dependencies carry no version constraint, so a mismatch
+# otherwise surfaces as a MissingMethodException from somewhere unrelated.
+#
+#   https://github.com/sparr/atomcraft-mod-PixelArt/releases/tag/v0.4.0
 #
 PIXELART_ZIP="$HOME/.cache/atomcraft-pixelart-0.4.0/PixelArt.zip"
+
+# The sha256 of PixelArt.zip as downloaded from that release. Verified on every run and fatal on
+# a mismatch; empty skips the check. Pixel Art has published no SHA256SUMS yet, so this value is
+# only as good as the download it was taken from -- from its next release take it from SHA256SUMS
+# on the release page, which is the authority, rather than from a file already on disk.
+PIXELART_ZIP_SHA256="eabbdbc3a6eeb8260558f2998f1e2901d2301a32caa49db506aa9bad9de0517d"

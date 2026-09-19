@@ -26,3 +26,8 @@ ATOMCRAFT_HARNESS="$HOME/.cache/atomcraft-harness-0.4.0"
 # step with the Harness.RequireVersion pin in test/ModEntry.cs -- a mismatch is reported by the
 # harness at load time as a refused mod.
 ATOMCRAFT_HARNESS_ZIP="$HOME/.cache/atomcraft-harness-0.4.0/TestHarness.zip"
+
+# From SHA256SUMS on that release page, not computed from the file already on your disk -- the
+# point is to check the download against what the release says it is. Verified on every run and
+# fatal on a mismatch; empty skips the check.
+ATOMCRAFT_HARNESS_ZIP_SHA256="e3d3ab61da370f9761d4b11d1d7f2020134d605af83284bb09abe65a0c1df1fc"

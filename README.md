@@ -30,7 +30,7 @@ Mechanical pixels gain icon and/or text labels describing what they do and how t
 | --- | --- |
 | A triangle on the cell's edge | which way it points: conveyors, pumps, guns, lasers, prisms, bullets, and the output side of a gate or latch |
 | A second, faded triangle | the side a balancer takes *from*; the solid one is the side it gives to |
-| A standard **gate outline** | And, Or, Xor or Not, turned to face the way the pixel does. Its two input legs sit at 45 degrees because that is where the inputs are: a gate reads its two *diagonal* neighbours on the side away from its output. A Not gate has one straight leg, because it reads the cell directly behind it |
+| A standard **gate outline** | And, Or, Xor or Not, turned to face the way the pixel does |
 | A **two-gate latch**, one gate lit | which half is holding: the first while it waits for its input to rise, the second once it has fired and is holding until the input falls. Turned to face the way the pixel does |
 | `Foo` on its own | a match filter set to Foo |
 | A red **cross** over `Foo` | a nonmatch filter set to Foo |
@@ -53,6 +53,8 @@ Mechanical pixels gain icon and/or text labels describing what they do and how t
 1. Install [GodotMonoModLoader](https://github.com/sacroimper/GodotMonoModLoader).
 2. Drop `PixelInspector.zip` **and [`PixelArt.zip`](https://github.com/sparr/atomcraft-mod-PixelArt)** into `<user data>/Mods/`. Do not extract either.
 3. Launch with `-s GodotMonoModLoader.gd` (under Steam: `%command% -s GodotMonoModLoader.gd`).
+
+Releases carry `SHA256SUMS` for the zips: `sha256sum -c SHA256SUMS` checks a download against it, and attests to what was uploaded rather than to a reproducible build.
 
 ## Settings
 
@@ -84,6 +86,7 @@ cp harness.conf.example harness.conf   # then edit it
 ./play.sh                              # a real, playable game with only this mod
 ./play.sh --debug                      # ...with the diagnostic overlay switched on
 ./play.sh --verify                     # boot it headless and confirm it loaded
+./release.sh 1.2.3                     # stage the zips and SHA256SUMS; publishes nothing
 ```
 
 Tests run inside the real game through the [Atomcraft TestHarness](https://github.com/sparr/atomcraft-mod-TestHarness), against a patched *copy* of the install in a throwaway prefix. Your saves and your real game are never touched.
