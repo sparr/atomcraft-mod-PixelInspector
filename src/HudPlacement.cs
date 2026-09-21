@@ -138,6 +138,9 @@ internal static class CursorPatch
         // so a guard raised on the last frame Alt was held would never be told to come off, and
         // the interface would stay dead until something else reset the mod. This runs every frame
         // whatever the panel is doing.
+        // Before the guard, not after: the guard asks whether the panel is up, and on the frame
+        // a release flips that the two would otherwise disagree for one frame.
+        StickyPanel.Sync();
         ClickGuard.Sync();
 
         var hide = OverPanel();

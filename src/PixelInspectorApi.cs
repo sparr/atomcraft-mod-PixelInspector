@@ -91,6 +91,13 @@ public static class PixelInspectorApi
     /// </summary>
     public static bool MarkerSuppressedLastFrame => Magnifier.MarkerSuppressedLastFrame;
 
+    /// <summary>
+    /// Whether a tap of Alt has left the panel up with nothing held. Reported because it is the
+    /// other half of <see cref="Showing"/>: a panel that is up for this reason looks exactly like
+    /// one held up, and only this says which.
+    /// </summary>
+    public static bool PanelStuck => StickyPanel.Stuck;
+
     /// <summary>How many screen pixels one world pixel takes in the magnifier right now.</summary>
     public static int PanelCell => Magnifier.Cell;
 
@@ -163,6 +170,7 @@ public static class PixelInspectorApi
         // menus and nothing to suggest which mod did it.
         CursorPatch.Restore();
         ClickGuard.Clear();
+        StickyPanel.Clear();
         ResetCounters();
 
         // Settings.Reset put debugOverlay back to false, and Sync is what makes that mean
@@ -180,6 +188,6 @@ public static class PixelInspectorApi
     /// something you go looking for in <c>godot.log</c>.
     /// </summary>
     public static string DescribeState() =>
-        $"{Settings.Describe()} faulted={Faulted} ready={Ready} " +
+        $"{Settings.Describe()} faulted={Faulted} stuck={PanelStuck} ready={Ready} " +
         $"annotatedMaterials={AnnotatedMaterials} panel={PanelCells}x{PanelCells}@{PanelCell}";
 }

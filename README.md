@@ -13,7 +13,13 @@ to each configured pixel in the form of icons and text.
 Hold **Alt**. A square panel in the middle of the screen will show the a zoomed in and annotated
 view of the world pixels around your cursor.
 
-**Alt -** and **Alt =** zoom the panel in and out.
+**Tap Alt** and the panel stays up with nothing held. Any release of Alt puts it back down again,
+a tap or a hold alike. So holding Alt to glance at something still clears when you let go, and
+only a deliberate tap leaves the panel behind. `altTapSeconds` sets how long a press can last and
+still count as a tap.
+
+**Alt -** and **Alt =** zoom the panel in and out. While the panel is up those two keys zoom it
+rather than the camera, Alt or no Alt, so a panel left up keeps them until you put it down.
 
 ## What it draws
 
@@ -68,6 +74,7 @@ Written to `user://PixelInspector.json` the first time the mod runs, with a comm
 | --- | --- | --- |
 | `enabled` | `true` | `false` turns the whole mod off without uninstalling it |
 | `requireAlt` | `true` | `false` annotates all the time instead of only while Alt is held. Worth having while building something, tiring the rest of the time |
+| `altTapSeconds` | `0.25` | How long a press of Alt can last and still count as a tap, in seconds. A tap leaves the panel up; any release puts a raised one back down. `0` means no press ever counts, which is plain hold-to-look and nothing else |
 | `worldMarks` | `false` | `true` also draws the arrows and shapes on the machines themselves, across the world, not only in the panel. Never text |
 | `blockClicksOverUI` | `true` | Swallows a click made while the panel is up and the pointer is over interface that would take it — the case the panel marks with a thick red outline. Off leaves the warning and lets the click through |
 | `quietCursor` | `true` | Hides the mouse cursor where the panel would be drawn over it. The panel says where you are pointing more precisely than the cursor did, so the cursor is only in the way there. Off leaves the cursor alone |

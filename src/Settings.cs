@@ -45,6 +45,21 @@ public static class Settings
     public static bool RequireAlt = true;
 
     /// <summary>
+    /// How long a press of Alt may last and still count as a tap, in seconds. A tap leaves the
+    /// panel up; see <see cref="StickyPanel"/>.
+    ///
+    /// <para>It gates only the way <i>up</i>. Putting a raised panel back down takes any release,
+    /// however long the press, because a press made while the panel is already on screen cannot
+    /// have been a peek.</para>
+    ///
+    /// <para><b>0 means no press is ever a tap</b>, which is how a player asks for the plain
+    /// hold-to-look behaviour and nothing else. A large value makes every release raise the
+    /// panel. The default sits well above a deliberate tap, which is around a tenth of a second,
+    /// and well below a glance at the panel, which takes as long as it takes to read.</para>
+    /// </summary>
+    public static double AltTapSeconds = 0.25;
+
+    /// <summary>
     /// A ceiling on how much of a target's name is ever shown, however much room the cell has.
     /// Zero, the default, means no ceiling.
     ///
@@ -173,6 +188,7 @@ public static class Settings
             var settings = parsed.AsGodotDictionary();
             Enabled = Bool(settings, "enabled", Enabled);
             RequireAlt = Bool(settings, "requireAlt", RequireAlt);
+            AltTapSeconds = Clamp(Double(settings, "altTapSeconds", AltTapSeconds), 0.0, 5.0, "altTapSeconds");
             Radius = Clamp(Int(settings, "radius", Radius), 0, 64, "radius");
             WorldMarks = Bool(settings, "worldMarks", WorldMarks);
             QuietCursor = Bool(settings, "quietCursor", QuietCursor);
@@ -197,7 +213,7 @@ public static class Settings
 
     /// <summary>The current values on one line, for the startup log and for a failure report.</summary>
     public static string Describe() =>
-        $"enabled={Enabled} requireAlt={RequireAlt} radius={Radius} " +
+        $"enabled={Enabled} requireAlt={RequireAlt} altTap={AltTapSeconds}s radius={Radius} " +
         $"maxTextLength={MaxTextLength} worldMarks={WorldMarks} " +
         $"quietCursor={QuietCursor} blockClicksOverUI={BlockClicksOverUI} debugOverlay={DebugOverlay}";
 
@@ -211,6 +227,7 @@ public static class Settings
     {
         Enabled = true;
         RequireAlt = true;
+        AltTapSeconds = 0.25;
         Radius = 6;
         MaxTextLength = 0;
         WorldMarks = false;
@@ -237,6 +254,8 @@ public static class Settings
             $"    \"enabled\": {(Enabled ? "true" : "false")},\n" +
             "    \"_requireAlt\": \"false annotates all the time instead of only while Alt is held.\",\n" +
             $"    \"requireAlt\": {(RequireAlt ? "true" : "false")},\n" +
+            "    \"_altTapSeconds\": \"How long a press of Alt can last and still count as a tap. A tap leaves the panel up; any release puts a raised one back down. 0 means never leave it up.\",\n" +
+            $"    \"altTapSeconds\": {Invariant(AltTapSeconds)},\n" +
             "    \"_radius\": \"How many cells out from the cursor are annotated. 0 labels only the cell under it.\",\n" +
             $"    \"radius\": {Radius},\n" +
             "    \"_maxTextLength\": \"Ceiling on how much of a target name is shown; 0 for no ceiling. The zoom decides the rest, and a cut name ends in an ellipsis.\",\n" +
@@ -260,6 +279,17 @@ public static class Settings
     private static int Int(Godot.Collections.Dictionary settings, string key, int fallback) =>
         settings.TryGetValue(key, out var value) ? (int)value.AsDouble() : fallback;
 
+    private static double Double(Godot.Collections.Dictionary settings, string key, double fallback) =>
+        settings.TryGetValue(key, out var value) ? value.AsDouble() : fallback;
+
+    /// <summary>
+    /// A number the way JSON spells it, whatever the machine's locale spells it as. The only
+    /// non-integer setting written here, and a culture that uses a comma for the decimal point
+    /// would otherwise put one in the file and make it unparseable the next time the mod starts.
+    /// </summary>
+    private static string Invariant(double value) =>
+        value.ToString(System.Globalization.CultureInfo.InvariantCulture);
+
     /// <summary>
     /// Keeps a number inside the range the mod can actually honor, and says so when it had to.
     /// A value silently clamped is a setting that did not do what the file says it does.
@@ -267,6 +297,17 @@ public static class Settings
     private static int Clamp(int value, int min, int max, string key)
     {
         var clamped = Math.Clamp(value, min, max);
+        if (clamped != value)
+            Log.Warn($"{key}={value} is outside {min}..{max}; using {clamped}");
+        return clamped;
+    }
+
+    /// <inheritdoc cref="Clamp(int,int,int,string)"/>
+    private static double Clamp(double value, double min, double max, string key)
+    {
+        // NaN survives Math.Clamp, and a NaN threshold compares false against everything, so a
+        // mistyped value would silently mean "no press is ever a tap" instead of being reported.
+        var clamped = double.IsNaN(value) ? min : Math.Clamp(value, min, max);
         if (clamped != value)
             Log.Warn($"{key}={value} is outside {min}..{max}; using {clamped}");
         return clamped;

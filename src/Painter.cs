@@ -209,8 +209,13 @@ internal static class Painter
     /// <para>Handed to the library as the pass's predicate, so it is asked once a frame and the
     /// pass is not called at all when it answers false. See <see cref="Register"/> for why it is
     /// this rather than <see cref="DrawWhen.AltHeld"/>.</para>
+    ///
+    /// <para>The third term is what makes Alt a toggle as well as a modifier; see
+    /// <see cref="StickyPanel"/>. It is one predicate for the whole mod, so the magnifier, the
+    /// world marks, the zoom keys, the click guard and the hidden cursor all follow it together
+    /// and cannot disagree about whether the panel is up.</para>
     /// </summary>
-    internal static bool Showing => !Settings.RequireAlt || Canvas.AltHeld;
+    internal static bool Showing => !Settings.RequireAlt || Canvas.AltHeld || StickyPanel.Stuck;
 
     /// <summary>
     /// One frame's worth. Called by the library's shared per-frame pass, after the game has
