@@ -2,6 +2,11 @@
 
 Broad strokes only. Each release's notes say more, and the commits say most.
 
+## 0.2.0
+
+- **Circuit connections are drawn.** A line from each circuit pixel toward every neighbour it is wired to, in a lighter or darker shade of the pixel's own colour. Two colours sharing an edge get no line between them, which is how a break shows; a Mirror between them does, because it carries no channel.
+- **Tap Alt to leave the panel up.** Any release puts a raised panel back down, so holding Alt to glance at something still clears when you let go. `altTapSeconds` sets how long a press can last and still count as a tap.
+
 ## 0.1.0
 
 First release.

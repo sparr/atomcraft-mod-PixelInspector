@@ -3,7 +3,7 @@
   "name": "Pixel Inspector",
   "description": "Hold Alt to read every machine around the cursor at once: a filter's target material, a gate's logic, a thermostat's setting, and which way each one points. The game tells you all of this in the hover box, one pixel at a time.",
   "author": "sparr",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "modules": [
     {
       "moduleId": "PixelInspector/Main",
