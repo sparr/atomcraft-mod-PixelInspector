@@ -212,7 +212,7 @@ public static class Settings
         Enabled = true;
         RequireAlt = true;
         Radius = 6;
-        MaxTextLength = 16;
+        MaxTextLength = 0;
         WorldMarks = false;
         QuietCursor = true;
         DebugOverlay = false;
