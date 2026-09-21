@@ -29,6 +29,7 @@ internal static class MaterialsInitPatch
         try
         {
             MaterialAnnotations.Build();
+            Circuit.Build(Materials.Count);
             Log.Info($"{MaterialAnnotations.Annotated} of {Materials.Count} materials annotated");
         }
         catch (Exception e)
@@ -36,6 +37,7 @@ internal static class MaterialsInitPatch
             // Not fatal: with no table every lookup returns "nothing to draw", so the mod is
             // inert rather than broken, and the game boots.
             MaterialAnnotations.Forget();
+            Circuit.Clear();
             Log.Error($"could not build the annotation table, so nothing will be drawn: {e}");
         }
     }
