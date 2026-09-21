@@ -22,12 +22,16 @@ if your cursor is over a UI element that would capture a click.
 
 Any tool highlight around your cursor appears as outlines in the inspector panel.
 
+Circuit pixels gain a line from the center toward each neighbour they are wired to, so a bus, a
+bridge and a break in one are all visible without tracing colours by eye.
+
 Mechanical pixels gain icon and/or text labels describing what they do and how they are configured.
 
 ### Specific annotations
 
 | Mark | Meaning |
 | --- | --- |
+| A **line toward a neighbour** | the two are wired together. A lighter or darker shade of the pixel's own colour, behind everything else. Colours that share an edge but not a channel get no line, which is how a break shows |
 | A triangle on the cell's edge | which way it points: conveyors, pumps, guns, lasers, prisms, bullets, and the output side of a gate or latch |
 | A second, faded triangle | the side a balancer takes *from*; the solid one is the side it gives to |
 | A standard **gate outline** | And, Or, Xor or Not, turned to face the way the pixel does |

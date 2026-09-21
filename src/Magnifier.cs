@@ -393,6 +393,20 @@ internal static class Magnifier
             if (_cell >= 24)
                 canvas.DrawOutline(full, Grid);
 
+            // The circuit, behind everything. A pixel's links are drawn before its annotation so
+            // a number or a name sits on top of its own wiring rather than under it.
+            if (plain is { } beneath && Circuit.Ready)
+            {
+                Span<Vector2I> links = stackalloc Vector2I[8];
+                var n = Circuit.LinksAt(field, x, y, links);
+                if (n > 0)
+                {
+                    var wire = CircuitLines.Tint(beneath);
+                    for (var k = 0; k < n; k++)
+                        CircuitLines.Draw(canvas, full, links[k], wire);
+                }
+            }
+
             var annotation = MaterialAnnotations.At(field, x, y);
             if (annotation.Any)
             {
